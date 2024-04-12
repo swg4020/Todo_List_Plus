@@ -11,7 +11,6 @@ import {
   Checkbox,
   Container,
   Flex,
-  FormErrorMessage,
   Heading,
   Input,
   VStack,
@@ -59,6 +58,7 @@ function TodoList() {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
+  
   console.log(todos);
   return (
     <Container
@@ -73,7 +73,7 @@ function TodoList() {
         <Heading>Todo-List-Plus</Heading>
         <Box>{todos.length}</Box>
       </Box>
-      <Box as="form" m={"30px 0"} onSubmit={handleSubmit(onSubmitTodo)}>
+      <Box as="form" h={"50px"} m={"30px 0"} onSubmit={handleSubmit(onSubmitTodo)} >
         <Input
           {...register("todo", {
             required: "내용을 작성해 주세요.",
@@ -83,6 +83,7 @@ function TodoList() {
           bgColor={"gray.100"}
           size={"md"}
         />
+        <Box>{errors?.todo?.message}</Box>
       </Box>
 
       <VStack>
