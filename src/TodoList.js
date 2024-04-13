@@ -24,9 +24,16 @@ function TodoList() {
     const getTodo = localStorage.getItem("todos");
     return getTodo ? JSON.parse(getTodo) : [];
   });
+
+  // const [mode, setMode] = useState(() => {
+  //   const getMode = localStorage.getItem("mode");
+  //   return getMode ? JSON.parse(getMode) : [{id: false}];
+  // });
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cRef = useRef();
   const [currentID, setCurrentID] = useState();
+  const [finishtodo, setFinshTodo] = useState(false);
 
   const {
     register,
@@ -38,6 +45,9 @@ function TodoList() {
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
+  // useEffect(() => {
+  //   localStorage.setItem("mode", JSON.stringify(mode));
+  // }, [mode]);
   //자바스크립트파일을 제이슨으로 변경해주면서 변경후에 로컬저장소에 저장된다. 이 기능을 하지 않으면 저장이 되지 않는다.
 
   const onSubmitTodo = (data) => {
@@ -52,14 +62,21 @@ function TodoList() {
         data.id === id ? { ...data, finish: !data.finish } : data
       )
     );
+    if (finishtodo === false) {
+      setFinshTodo(true);
+    } else {
+      setFinshTodo(false);
+    }
+    
   };
-
+  console.log(finishtodo);
   const onClickDelete = (id) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
-  
-  console.log(todos);
+  const todocount = todos.filter((todo) => todo.finish === true);
+  // console.log(todocount[0].finish);
+  console.log(todocount.length);
   return (
     <Container
       maxW={"450px"}
@@ -69,11 +86,20 @@ function TodoList() {
       bgColor={"gray.500"}
       padding={"150px 20px"}
     >
-      <Box>
+      <Flex>
         <Heading>Todo-List-Plus</Heading>
-        <Box>{todos.length}</Box>
-      </Box>
-      <Box as="form" h={"50px"} m={"30px 0"} onSubmit={handleSubmit(onSubmitTodo)} >
+        <Box>
+          {todos.length === 0
+            ? "오늘 할일이없습니다"
+            : `${todocount.length}/${todos.length}`}
+        </Box>
+      </Flex>
+      <Box
+        as="form"
+        h={"50px"}
+        m={"30px 0"}
+        onSubmit={handleSubmit(onSubmitTodo)}
+      >
         <Input
           {...register("todo", {
             required: "내용을 작성해 주세요.",
@@ -100,6 +126,7 @@ function TodoList() {
           >
             <Flex>
               <Box>{data.text}</Box>
+              {finishtodo === true ? <Box>완료</Box> : ""}
               <DeleteIcon
                 onClick={() => {
                   onOpen();
