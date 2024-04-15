@@ -16,6 +16,7 @@ import {
   Text,
   VStack,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -34,6 +35,7 @@ function TodoList() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cRef = useRef();
   const [currentID, setCurrentID] = useState();
+  const toast = useToast();
 
   const {
     register,
@@ -63,64 +65,96 @@ function TodoList() {
       )
     );
   };
-  
+
   const onClickDelete = (id) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
   const todocount = todos.filter((todo) => todo.finish === true);
   // console.log(todocount[0].finish);
-  // console.log(todocount.length);
 
-  
   return (
     <Container
       maxW={"450px"}
       w={"100%"}
       minH={"100vh"}
       m={"0 auto"}
-      bgColor={"gray.500"}
-      padding={"150px 20px"}
+      bgColor={"green.300"}
+      padding={"100px 20px"}
     >
-      <Flex>
-        <Heading>Todo-List-Plus</Heading>
-        <Box>
-          {todos.length === 0
-            ? "오늘 할일이없습니다"
-            : `${todocount.length}/${todos.length}`}
+      <Flex
+        w={"100%"}
+        justifyContent={"space-around"}
+        alignItems={"center"}
+        border={"1px solid RGBA(0, 0, 0, 0.24)"}
+        borderRadius={"15px"}
+        padding={"20px"}
+        bgColor={"green.500"}
+      >
+        <Heading color={"RGBA(255, 255, 255, 0.80)"}>Todo-List-Plus</Heading>
+        <Box
+          w={"100px"}
+          h={"100px"}
+          borderRadius={"50%"}
+          textAlign={"center"}
+          lineHeight={"100px"}
+          fontSize={"25px"}
+          fontWeight={600}
+          bgColor={"RGBA(0, 0, 0, 0.36)"}
+          boxSizing={"border-box"}
+          color={"RGBA(255, 255, 255, 0.80)"}
+        >
+          {todos.length === 0 ? "0" : `${todocount.length}/${todos.length}`}
         </Box>
       </Flex>
-      <Box
-        as="form"
-        h={"50px"}
-        m={"30px 0"}
-        onSubmit={handleSubmit(onSubmitTodo)}
-      >
-        <Input
-          {...register("todo", {
-            required: "내용을 작성해 주세요.",
-          })}
-          placeholder="할일을 입력해주세요"
-          borderColor={"gray.100"}
-          bgColor={"gray.100"}
-          size={"md"}
-        />
+      <Flex h={"110px"} flexWrap={"wrap"}>
+        <Box
+          as="form"
+          h={"10px"}
+          m={"30px 0"}
+          onSubmit={handleSubmit(onSubmitTodo)}
+          display={"flex"}
+          justifyContent={"space-between"}
+          w={"100%"}
+        >
+          <Input
+            {...register("todo", {
+              required: "내용을 작성해 주세요.",
+            })}
+            placeholder="할일을 입력해주세요"
+            borderColor={"gray.100"}
+            bgColor={"gray.100"}
+            size={"md"}
+            width={"85%"}
+          />
+
+          <Button
+            type="submit"
+            w={"10%"}
+            borderRadius={"50%"}
+          >
+            +
+          </Button>
+        </Box>
         <Box>{errors?.todo?.message}</Box>
-      </Box>
+      </Flex>
 
       <VStack h={"100%"}>
         {todos.map((data) => (
           <Checkbox
             key={data.id}
             w={"100%"}
-            h={"60px"}
-            bgColor={"white"}
+            h={"50px"}
+            border={"1px solid RGBA(0, 0, 0, 0.24)"}
             p={"15px"}
             size={"lg"}
             isChecked={data.finish}
             onChange={() => onChangeCheck(data.id)}
+            borderRadius={"5px"}
+            colorScheme={"green"}
+            bgColor={"green.100"}
           >
-            <Flex>
+            <Flex fontWeight={"600"} color={"Gray 900"}>
               <Text
                 textDecoration={data.finish === true ? "line-through" : "none"}
               >
@@ -132,6 +166,10 @@ function TodoList() {
                   onOpen();
                   setCurrentID(data.id);
                 }}
+                position={"absolute"}
+                top={"14px"}
+                right={"20px"}
+                fontSize={"22px"}
               />
             </Flex>
           </Checkbox>
@@ -140,7 +178,7 @@ function TodoList() {
 
       <AlertDialog isOpen={isOpen}>
         <AlertDialogOverlay>
-          <AlertDialogContent>
+          <AlertDialogContent w={"90%"}>
             <AlertDialogHeader>삭제 확인</AlertDialogHeader>
             <AlertDialogBody>정말 삭제하시겠습니까?</AlertDialogBody>
             <AlertDialogFooter>
@@ -148,7 +186,14 @@ function TodoList() {
                 onClick={() => {
                   onClickDelete(currentID);
                   onClose();
+                  toast({
+                    title: "삭제 완료.",
+                    status: "success",
+                    duration: 9000,
+                    isClosable: true,
+                  });
                 }}
+                marginRight={"10px"}
               >
                 삭제
               </Button>
