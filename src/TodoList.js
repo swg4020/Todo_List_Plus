@@ -13,6 +13,7 @@ import {
   Flex,
   Heading,
   Input,
+  Text,
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -33,7 +34,6 @@ function TodoList() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cRef = useRef();
   const [currentID, setCurrentID] = useState();
-  const [finishtodo, setFinshTodo] = useState(false);
 
   const {
     register,
@@ -62,26 +62,22 @@ function TodoList() {
         data.id === id ? { ...data, finish: !data.finish } : data
       )
     );
-    if (finishtodo === false) {
-      setFinshTodo(true);
-    } else {
-      setFinshTodo(false);
-    }
-    
   };
-  console.log(finishtodo);
+  
   const onClickDelete = (id) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
   const todocount = todos.filter((todo) => todo.finish === true);
   // console.log(todocount[0].finish);
-  console.log(todocount.length);
+  // console.log(todocount.length);
+
+  
   return (
     <Container
       maxW={"450px"}
       w={"100%"}
-      h={"100vh"}
+      minH={"100vh"}
       m={"0 auto"}
       bgColor={"gray.500"}
       padding={"150px 20px"}
@@ -112,7 +108,7 @@ function TodoList() {
         <Box>{errors?.todo?.message}</Box>
       </Box>
 
-      <VStack>
+      <VStack h={"100%"}>
         {todos.map((data) => (
           <Checkbox
             key={data.id}
@@ -125,8 +121,12 @@ function TodoList() {
             onChange={() => onChangeCheck(data.id)}
           >
             <Flex>
-              <Box>{data.text}</Box>
-              {finishtodo === true ? <Box>완료</Box> : ""}
+              <Text
+                textDecoration={data.finish === true ? "line-through" : "none"}
+              >
+                {data.text}
+              </Text>
+
               <DeleteIcon
                 onClick={() => {
                   onOpen();
