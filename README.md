@@ -78,3 +78,6 @@ https://dribbble.com/shots/22604632-Todo-Website-Todo-App
 
 디자인
 
+메인로고 글자 패딩 줄이고
+밑에 내용작성해주세요  이걸 다르게 올려,
+패딩 높이값 수정
